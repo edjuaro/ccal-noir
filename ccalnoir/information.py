@@ -291,7 +291,7 @@ def differential_gene_expression(
         target=classes,
         function=ranking_method,
         target_ascending=False,
-        n_top_features=0.99,
+        n_top_features=floor(max_number_of_genes_to_show/2),
         max_n_features=max_number_of_genes_to_show,
         n_samplings=30,
         n_permutations=number_of_permutations,
@@ -373,7 +373,7 @@ def match_to_profile(
         # max_n_unique_objects_for_drop_slices=1,
         function=ranking_method,
         target_ascending=False,
-        n_top_features=0.99,
+        n_top_features=max_number_of_genes_to_show,
         max_n_features=max_number_of_genes_to_show,
         n_samplings=30,
         n_permutations=number_of_permutations,
@@ -475,6 +475,7 @@ def make_match_panel(target,
 
     if scores is None:
         # Match
+
         scores = match(
             target.values,
             features.values,
@@ -503,18 +504,41 @@ def make_match_panel(target,
         if max_n_features < indices.size:
             indices = indices[:max_n_features // 2].append(
                 indices[-max_n_features // 2:])
+        # if n_top_features > 1:
+        #     # Ad hoc indices:
+        #     scores['absScore'] = abs(scores['Score'])
+        #     scores.sort_values(by='absScore', ascending=False, inplace=True)
+        #     scores.reset_index(inplace=True, drop=False)
+        #     scores.sort_values(by='Score', ascending=False, inplace=True)
+        #     scores.reset_index(inplace=True, drop=False)
+        #
+        #     # exit(scores)
+        #     indices = scores.ix[scores['index'] <= 2 * n_top_features].index
+        #     if max_n_features < indices.size:
+        #         indices = scores.ix[scores['index'] < max_n_features].index
+        #     scores.drop(['absScore', 'index'], axis=1, inplace=True)
+        #     scores.set_index('Name', inplace=True)
+        # else:
+        #     indices = get_top_and_bottom_series_indices(scores['Score'],
+        #                                                 n_top_features)
+        #     if max_n_features < indices.size:
+        #         indices = indices[:max_n_features // 2].append(
+        #             indices[-max_n_features // 2:])
     else:
         indices = sorted(
             indices,
             key=lambda i: scores.loc[i, 'Score'],
             reverse=not scores_ascending)
-    scores_to_plot = scores.loc[indices]
+
+    scores_to_plot = scores.ix[indices]
     features_to_plot = features.loc[scores_to_plot.index]
+
+    print(scores_to_plot)
 
     # Make annotations
     annotations = DataFrame(index=scores_to_plot.index)
     # Make IC(MoE)s
-    annotations['Score'] = scores_to_plot[['Score', '0.95 MoE']].apply(
+    annotations['Score(0.95 MoE)'] = scores_to_plot[['Score', '0.95 MoE']].apply(
         lambda s: '{0:.3f}({1:.3f})'.format(*s), axis=1)
     # Make p-value
     annotations['p-value'] = scores_to_plot['p-value'].apply('{:.2e}'.format)
@@ -657,7 +681,7 @@ def match(target,
     """
 
     results = DataFrame(
-        columns=['Score', '{} MoE'.format(confidence), 'p-value', 'FDR'])
+        columns=['Score(0.95 MoE)', '{} MoE'.format(confidence), 'p-value', 'FDR'])
 
     # Match
     print('Computing match score with {} ({} process) ...'.format(
@@ -674,6 +698,26 @@ def match(target,
     if max_n_features < indices.size:
         indices = indices[:max_n_features // 2].append(
             indices[-max_n_features // 2:])
+
+    # if n_top_features > 1:
+    #     # Ad hoc indices:
+    #     results['absScore'] = abs(results['Score'])
+    #     results.sort_values(by='absScore', ascending=False, inplace=True)
+    #     results.reset_index(inplace=True, drop=True)
+    #     results.sort_values(by='Score', ascending=False, inplace=True)
+    #     results.reset_index(inplace=True, drop=False)
+    #
+    #     # exit(results)
+    #     indices = results.ix[results['index'] <= 2*n_top_features].index
+    #     if max_n_features < indices.size:
+    #         indices = results.ix[results['index'] < max_n_features].index
+    #     results.drop(['absScore', 'index'], axis=1, inplace=True)
+    # else:
+    #     indices = get_top_and_bottom_series_indices(results['Score'],
+    #                                                 n_top_features)
+    #     if max_n_features < indices.size:
+    #         indices = indices[:max_n_features // 2].append(
+    #             indices[-max_n_features // 2:])
 
     # Compute MoE
     if 3 <= n_samplings and 3 <= ceil(0.632 * target.size):
@@ -1070,7 +1114,7 @@ def plot_match_panel(target, target_int_to_o, features, max_std, annotations,
     target_ax.text(
         target_ax.get_xlim()[1] * 1.018,
         0.5,
-        ' ' * 5 + 'Score' + ' ' * 13 + 'p-value' + ' ' * 12 + 'FDR',
+        ' ' * 5 + 'Score(0.95 MoE)' + ' ' * 13 + 'p-value' + ' ' * 12 + 'FDR',
         verticalalignment='center',
         **FONT_STANDARD)
 
