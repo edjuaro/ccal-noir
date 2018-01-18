@@ -537,8 +537,6 @@ def make_match_panel(target,
     scores_to_plot = scores.ix[indices]
     features_to_plot = features.loc[scores_to_plot.index]
 
-    print(scores_to_plot)
-
     # Make annotations
     annotations = DataFrame(index=scores_to_plot.index)
     # Make IC(MoE)s
