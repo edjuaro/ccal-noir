@@ -532,11 +532,13 @@ def make_match_panel(target,
                      plot_column_names, max_ytick_size, file_path_plot, dpi)
 
     # 2018-01-17 printing hyperlink to PDF and TXT:
-    print("The PDF of this heat map can be downloaded here:\n")
+    print("-----------------------------------------------")
+    print("The PDF of this heatmap can be downloaded here:\n")
     display(HTML('<a href="'+file_path_plot+'" target="_blank">PDF of the heatmap</a>'))
-
+    print("-----------------------------------------------")
     print("The TXT with the data displayed on the heatmap can be downloaded here:\n")
     display(HTML('<a href="' + file_path_txt + '" target="_blank">TXT containing the output data</a>'))
+    print("-----------------------------------------------")
 
     return scores
 
