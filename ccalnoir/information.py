@@ -25,6 +25,13 @@ import pandas as pd
 import urllib.request
 import validators
 
+# This is forprinting the hyperlink
+from IPython.core.display import display, HTML
+
+import warnings
+# warnings.filterwarnings("ignore", '.*no handles.*',)  # Ignore known useless warnings
+warnings.simplefilter("ignore")  # Ignore all warnings
+
 EPS = finfo(float).eps
 RANDOM_SEED = 20121020
 
@@ -523,6 +530,13 @@ def make_match_panel(target,
                      annotations, figure_size, None, None, target_type,
                      features_type, title, target_annotation_kwargs,
                      plot_column_names, max_ytick_size, file_path_plot, dpi)
+
+    # 2018-01-17 printing hyperlink to PDF and TXT:
+    print("The PDF of this heat map can be downloaded here:\n")
+    display(HTML('<a href="'+file_path_plot+'" target="_blank">PDF of the heatmap</a>'))
+
+    print("The TXT with the data displayed on the heatmap can be downloaded here:\n")
+    display(HTML('<a href="' + file_path_txt + '" target="_blank">TXT containing the output data</a>'))
 
     return scores
 
@@ -1054,7 +1068,7 @@ def plot_match_panel(target, target_int_to_o, features, max_std, annotations,
     target_ax.text(
         target_ax.get_xlim()[1] * 1.018,
         0.5,
-        ' ' * 5 + 'IC(\u0394)' + ' ' * 13 + 'p-value' + ' ' * 12 + 'FDR',
+        ' ' * 5 + 'Score' + ' ' * 13 + 'p-value' + ' ' * 12 + 'FDR',
         verticalalignment='center',
         **FONT_STANDARD)
 

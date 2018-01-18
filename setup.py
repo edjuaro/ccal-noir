@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='ccalnoir',
-      version='1.0.1',
+      version='1.0.2',
       description='CCAL but with "No R".',
       url='https://github.com/edjuaro/ccal-noir',
       author='Edwin F. Juarez',
@@ -17,5 +17,6 @@ setup(name='ccalnoir',
             'statsmodels',
             'seaborn',
             'validators',
+            'ipython',
             ],
       )
