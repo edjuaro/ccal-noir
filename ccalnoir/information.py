@@ -300,6 +300,8 @@ def differential_gene_expression(
         title=title,
         file_path_prefix=output_filename)
 
+    show()
+
     return gene_scores
 
 
@@ -381,6 +383,8 @@ def match_to_profile(
         target_type='continuous',
         title=title,
         file_path_prefix=output_filename)
+
+    show()
 
     return gene_scores
 
@@ -1161,7 +1165,7 @@ def plot_match_panel(target, target_int_to_o, features, max_std, annotations,
     # Save
     if file_path:
         save_plot(file_path, dpi=dpi)
-    show(target_ax)
+    # show(target_ax)
 
 
 def save_plot(file_path, overwrite=True, dpi=100):
