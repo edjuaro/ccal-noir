@@ -33,10 +33,11 @@ import warnings
 warnings.simplefilter("ignore")  # Ignore all warnings
 
 EPS = finfo(float).eps
+# TODO: Turn this into an advanced parameter for any GP Module -- 2018-02-08
 RANDOM_SEED = 20121020
 
 
-def information_coefficient_dist(x, y, n_grids=25, jitter=1E-10, random_seed=20170821):
+def information_coefficient_dist(x, y, n_grids=25, jitter=1E-10, random_seed=20121020):
     return 1 - information_coefficient(x, y, n_grids, jitter, random_seed)
 
 
@@ -45,7 +46,7 @@ def compute_information_coefficient(x, y, **kwargs):
 
 
 def information_coefficient(x, y, n_grids=25,
-                            jitter=1E-10, random_seed=20170821):
+                            jitter=1E-10, random_seed=20121020):  # 2018-02-08 changing random seed to be 20121020
     """
     Compute the information coefficient between x and y, which are
         continuous, categorical, or binary vectors. This function uses only python libraries -- No R is needed.
@@ -79,6 +80,7 @@ def information_coefficient(x, y, n_grids=25,
         x = asarray(x, dtype=float)
         y = asarray(y, dtype=float)
 
+        # 2018-02-08:
         # Add jitter
         seed(random_seed)
         x += random_sample(x.size) * jitter
@@ -127,6 +129,8 @@ def information_coefficient(x, y, n_grids=25,
         ic = sign(cor) * sqrt(1 - exp(-2 * mi))
 
         # TODO: debug when MI < 0 and |MI|  ~ 0 resulting in IC = nan
+
+        # 2018-02-08: We should not turn this to zero. It's best to error out
         if isnan(ic):
             ic = 0
 
