@@ -1070,13 +1070,15 @@ def plot_match_panel(target, target_int_to_o, features, max_std, annotations,
 
     # Plot title
     if title:
-
-        target_ax.text(
-            target_ax.get_xlim()[1] / 2,
-            -1,
-            title,
-            horizontalalignment='center',
-            **FONT_LARGEST)
+        gca().set_title(title, horizontalalignment='center', **FONT_LARGEST)
+        # print(target_ax)
+        # target_ax.title(title)
+        # target_ax.suptile(
+        #     target_ax.get_xlim()[1] / 2,
+        #     -1,
+        #     title,
+        #     horizontalalignment='center',
+        #     **FONT_LARGEST)
 
     # Plot target label
     if target_type in ('binary', 'categorical'):
@@ -1117,10 +1119,23 @@ def plot_match_panel(target, target_int_to_o, features, max_std, annotations,
                     FONT_STANDARD, target_annotation_kwargs, lambda a, b: b))
 
     # Plot annotation header
+    # target_ax.text(
+    #     target_ax.get_xlim()[1] * 1.018,
+    #     0.5,
+    #     ' ' * 5 + 'Score(0.95 MoE)' + ' ' * 13 + 'p-value' + ' ' * 12 + 'FDR',
+    #     verticalalignment='center',
+    #     **FONT_STANDARD)
+
+    # length: 41 = 19 + 13 + 9
+
+    # header_string = ' '*2+'Score(0.95 MoE)' + ' '*6 + 'p-value' + ' '*6 + 'FDR' + ' '*2
+    # header_string = '{:^20}'.format('Score(0.95 MoE)') + '{:^20}'.format('p-value') + '{:<20}'.format('FDR')
+    # header_string = 'Score(0.95 MoE)'.center(19) + '\t' + 'p-value'.center(15) + '\t' + 'FDR'.center(11)
+    header_string = 'Score(0.95 MoE)'.center(19) + 'p-value'.center(15) + 'FDR'.center(11)
     target_ax.text(
         target_ax.get_xlim()[1] * 1.018,
         0.5,
-        ' ' * 5 + 'Score(0.95 MoE)' + ' ' * 13 + 'p-value' + ' ' * 12 + 'FDR',
+        header_string.expandtabs(),
         verticalalignment='center',
         **FONT_STANDARD)
 
@@ -1134,15 +1149,32 @@ def plot_match_panel(target, target_int_to_o, features, max_std, annotations,
         clip_on=False,
         aa=True)
 
+    artists_list = [target_ax, features_ax]  # 2018-02-12: EJ, keep track of what to plot/save
+
     # Plot features heatmap
-    heatmap(
-        features,
-        ax=features_ax,
-        vmin=features_min,
-        vmax=features_max,
-        cmap=features_cmap,
-        xticklabels=plot_column_names,
-        cbar=False)
+    # 2018-02-12 EJ modified this
+    data_df = features.copy()
+    # Row-normalizing for display purposes only:
+    data_df = data_df.subtract(data_df.min(axis=1), axis=0)
+    data_df = data_df.div(data_df.max(axis=1), axis=0)
+
+    heatmap(data_df, ax=features_ax, cbar=False, cmap='bwr')
+    # features_ax.xaxis.tick_top()
+    [label.set_rotation(90) for label in features_ax.get_xticklabels()]
+    [artists_list.append(label) for label in features_ax.get_xticklabels()]
+
+    # artists_list.append(features_ax.get_xticklabels())
+    # extra_artists = tuple(features_ax.get_xticklabels())
+    # extra_artists = None
+
+    # heatmap(
+    #     features,
+    #     ax=features_ax,
+    #     vmin=features_min,
+    #     vmax=features_max,
+    #     cmap=features_cmap,
+    #     xticklabels=plot_column_names,
+    #     cbar=False)
 
     # Decorate features heatmap
     decorate(
@@ -1157,35 +1189,50 @@ def plot_match_panel(target, target_int_to_o, features, max_std, annotations,
 
     # Plot annotations
     for i, (a_i, a) in enumerate(annotations.iterrows()):
+        # 2018-02-12: adding temp_string
+
+        # temp_string = ''.join(a.tolist())
+        temp_list = a.tolist()
+        # 19 + 13 + 9 -- This will only work for 3 columns
+        # temp_string = '{:^20}'.format(temp_list[0]) + '{:^20}'.format(temp_list[1]) + '{:^20}'.format(temp_list[2])
+        temp_string = temp_list[0].center(19) + '\t' + temp_list[1].center(15) + '\t' + temp_list[2].center(11)
+        # print(i)
+        # print(header_string)
+        # print(temp_string)
         features_ax.text(
             target_ax.axis()[1] * 1.018,
             i + 0.5,
-            '\t'.join(a.tolist()).expandtabs(),
+            temp_string.expandtabs(),
             verticalalignment='center',
             **FONT_STANDARD)
 
+    # exit()
+
     # Save
     if file_path:
-        save_plot(file_path, dpi=dpi)
+        save_plot(file_path, dpi=dpi, extra_artists=tuple(artists_list))
     # show(target_ax)
 
 
-def save_plot(file_path, overwrite=True, dpi=100):
+def save_plot(file_path, overwrite=True, dpi=100, extra_artists=None):
     """
     Establish file path and save plot.
     Arguments:
         file_path (str):
         overwrite (bool):
         dpi (int):
+        extra_artists (tuple):
     Returns:
         None
     """
+    # 2018-02-12: EJ modified this to add extra artists
 
     # If the figure doesn't exist or overwriting
     if not isfile(file_path) or overwrite:
 
         establish_path(file_path)
 
+        # savefig(file_path, dpi=dpi, bbox_inches='tight', bbox_extra_artists=extra_artists)
         savefig(file_path, dpi=dpi, bbox_inches='tight')
 
 

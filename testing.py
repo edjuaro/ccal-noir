@@ -23,8 +23,12 @@ class_file = "test_data/BRCA_minimal.cls"
 # classes = pd.Series(classes, index=data_df.columns)
 
 if RUN:
-    scores = differential_gene_expression(phenotype_file=class_file, gene_expression=data_file, output_filename='DE_test',
-                                          ranking_method=ccal.custom_pearson_corr, number_of_permutations=10)
+    scores = differential_gene_expression(phenotype_file=class_file,
+                                          gene_expression=data_file,
+                                          output_filename='DE_test',
+                                          title='Differential Expression Test',
+                                          ranking_method=ccal.custom_pearson_corr,
+                                          number_of_permutations=10)
 
     # pickle.dump(scores, open('match_results.p', 'wb'))
 else:
@@ -33,10 +37,10 @@ else:
 
 # print(scores.iloc[np.r_[0:TOP, -TOP:0], :])
 
-scores['abs_score'] = abs(scores['Score'])
-scores['Feature'] = scores.index
-scores.sort_values('abs_score', ascending=False, inplace=True)
-scores.reset_index(inplace=True)
-scores['Rank'] = scores.index + 1
-
-print(scores.iloc[0:2*TOP, :])
+# scores['abs_score'] = abs(scores['Score'])
+# scores['Feature'] = scores.index
+# scores.sort_values('abs_score', ascending=False, inplace=True)
+# scores.reset_index(inplace=True)
+# scores['Rank'] = scores.index + 1
+#
+# print(scores.iloc[0:2*TOP, :])
