@@ -246,9 +246,6 @@ def drop_nan_columns(arrays):
         return arrays
 
 
-# The following lines have been added to reproduce CCAL but without using R
-
-
 def differential_gene_expression(
         gene_expression: "GCT filename; data matrix with input gene expression profiles",
         phenotype_file: "CLS filename; input binary phenotype/class distinction",
