@@ -21,6 +21,7 @@ from multiprocessing.pool import Pool
 from statsmodels.sandbox.stats.multicomp import multipletests
 from seaborn import heatmap, despine, set_style
 from .ccal_style import *
+from .elemental import get_file_from_server
 import pandas as pd
 import urllib.request
 import validators
@@ -282,22 +283,31 @@ def differential_gene_expression(
     :param random_seed: int | array; random number generator seed (can be set to a user supplied integer for reproducibility)
     :return: DataFrame; table of genes ranked by Information Coeff vs. phenotype
     """
-    data_df = pd.read_table(gene_expression, header=2, index_col=0)
+    # Loading GCT file
+    try:
+        data_df = pd.read_table(gene_expression, header=2, index_col=0)
+    except pd.errors.ParserError:
+        data_df = get_file_from_server(gene_pattern_url=gene_expression, file_type='GCT')
+
     try:
         data_df.drop('Description', axis=1, inplace=True)
     except KeyError:
         pass
 
+    # Loading CLS file
     if validators.url(phenotype_file):
         urlfile, __ = urllib.request.urlretrieve(phenotype_file)
     else:
         urlfile = phenotype_file
 
     temp = open(urlfile)
-    temp.readline()
-    temp.readline()
-    classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
-    classes = pd.Series(classes, index=data_df.columns)
+    if 'html' in temp.readline():
+        classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
+        classes = pd.Series(classes, index=data_df.columns)
+    else:
+        temp.readline()
+        classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
+        classes = pd.Series(classes, index=data_df.columns)
 
     gene_scores = make_match_panel(
         features=data_df,
@@ -355,28 +365,31 @@ def match_to_profile(
     # Use phenotypes if both are provided.
     # Check that phenotypes_row_label actually exist in gene_expression DataFrame
 
-    data_df = pd.read_table(gene_expression, header=2, index_col=0)
+    # Loading GCT file
+    try:
+        data_df = pd.read_table(gene_expression, header=2, index_col=0)
+    except pd.errors.ParserError:
+        data_df = get_file_from_server(gene_pattern_url=gene_expression, file_type='GCT')
+
     try:
         data_df.drop('Description', axis=1, inplace=True)
     except KeyError:
         pass
 
-    if phenotype_input_method == 'CLS':
+    # Loading CLS file
+    if validators.url(phenotype_file):
+        urlfile, __ = urllib.request.urlretrieve(phenotype_file)
+    else:
+        urlfile = phenotype_file
 
-        if validators.url(phenotypes_file):
-            urlfile, __ = urllib.request.urlretrieve(phenotypes_file)
-        else:
-            urlfile = phenotypes_file
-
-        temp = open(urlfile)
-        temp.readline()
-        temp.readline()
-        classes = [float(i) for i in temp.readline().strip('\n').split(' ')]
+    temp = open(urlfile)
+    if 'html' in temp.readline():
+        classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
         classes = pd.Series(classes, index=data_df.columns)
-    elif phenotype_input_method == 'Name':
-        classes = data_df[phenotype_column][name_of_phenotype_to_match]
-    elif phenotype_input_method == 'Index':
-        classes = data_df.loc[name_of_phenotype_to_match]
+    else:
+        temp.readline()
+        classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
+        classes = pd.Series(classes, index=data_df.columns)
 
     # Turn a string into a callable function, if necessary
     if isinstance(ranking_method, str):
