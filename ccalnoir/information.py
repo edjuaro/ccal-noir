@@ -592,7 +592,7 @@ def make_match_panel(target,
     display(HTML('<a href="' + file_path_txt + '" target="_blank">TXT containing the output data</a>'))
     print("-----------------------------------------------")
 
-    return scores
+    return scores.drop(['Score(0.95 MoE)'])
 
 def drop_df_slices(df,
                    axis,
