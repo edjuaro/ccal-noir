@@ -592,7 +592,12 @@ def make_match_panel(target,
     display(HTML('<a href="' + file_path_txt + '" target="_blank">TXT containing the output data</a>'))
     print("-----------------------------------------------")
 
-    return scores.drop(['Score(0.95 MoE)'])
+    # get a list of columns
+    cols = list(scores.drop(['Score(0.95 MoE)'], axis=1))
+    # move the column to head of list using index, pop and insert
+    cols.insert(0, cols.pop(cols.index('Score')))
+    # use ix to reorder
+    return scores.ix[:, cols]
 
 def drop_df_slices(df,
                    axis,
