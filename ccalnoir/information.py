@@ -264,7 +264,8 @@ def differential_gene_expression(
         phenotype_file: "CLS filename; input binary phenotype/class distinction",
         output_filename: "Output files will have this name plus extensions .txt and .pdf",
         ranking_method: "The function to use to compute similarity between phenotypes and gene_expression",
-        max_number_of_genes_to_show: "Maximum number of genes to show in the heatmap"=20,
+        max_number_of_genes_to_show: "Maximum number of genes to show in the heatmap "
+                                     "(half will be overexpressed in one class and half in the other)"=20,
         number_of_permutations: "Number of random permutations to estimate statistical significance "
                                 "(p-values and FDRs)"=10,
         title: "The title of the heatmap"=None,
