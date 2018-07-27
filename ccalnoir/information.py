@@ -1706,7 +1706,7 @@ def merge_dicts_with_function(dict_0, dict_1, function):
     return merged_dict
 
 
-def fastkde(x, y, gridsize=(200, 200), extents=None, nocorrelation=False, weights=None, adjust=1., bandwith=):
+def fastkde(x, y, gridsize=(200, 200), extents=None, nocorrelation=False, weights=None, adjust=1.):
     """
     Taken from:
     https://github.com/mfouesneau/faststats
