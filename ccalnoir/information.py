@@ -25,6 +25,7 @@ from .elemental import get_file_from_server
 import pandas as pd
 import urllib.request
 import validators
+import os
 
 from scipy.sparse import coo_matrix
 from scipy.signal import convolve2d, convolve, gaussian
@@ -287,12 +288,16 @@ def differential_gene_expression(
     # Loading GCT file
     try:
         data_df = pd.read_table(gene_expression, header=2, index_col=0)
+    except FileNotFoundError:
+        data_df = pd.read_table(os.path.basename(gene_expression), header=2, index_col=0)
     except pd.errors.ParserError:
         data_df = get_file_from_server(gene_pattern_url=gene_expression, file_type='GCT')
 
     try:
         data_df.drop('Description', axis=1, inplace=True)
     except KeyError:
+        pass
+    except ValueError:
         pass
 
     # Loading CLS file
@@ -1701,7 +1706,7 @@ def merge_dicts_with_function(dict_0, dict_1, function):
     return merged_dict
 
 
-def fastkde(x, y, gridsize=(200, 200), extents=None, nocorrelation=False, weights=None, adjust=1.):
+def fastkde(x, y, gridsize=(200, 200), extents=None, nocorrelation=False, weights=None, adjust=1., bandwith=):
     """
     Taken from:
     https://github.com/mfouesneau/faststats
