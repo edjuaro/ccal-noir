@@ -596,12 +596,13 @@ def make_match_panel(target,
         file_path_plot = file_path_prefix + '.match.pdf'
     else:
         file_path_plot = None
-    plot_match_panel(target, target_int_to_o, features_to_plot, max_std,
-                     annotations, figure_size, None, None, target_type,
-                     features_type, title, target_annotation_kwargs,
-                     plot_column_names, max_ytick_size, file_path_plot, dpi)
 
     if show_plot:
+        plot_match_panel(target, target_int_to_o, features_to_plot, max_std,
+                         annotations, figure_size, None, None, target_type,
+                         features_type, title, target_annotation_kwargs,
+                         plot_column_names, max_ytick_size, file_path_plot, dpi)
+
         # 2018-01-17 printing hyperlink to PDF and TXT:
         print("-----------------------------------------------")
         print("The PDF of this heatmap can be downloaded here:\n")
