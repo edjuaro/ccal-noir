@@ -271,7 +271,8 @@ def differential_gene_expression(
                                 "(p-values and FDRs)"=10,
         title: "The title of the heatmap"=None,
         random_seed: "Random number generator seed (can be set to a user supplied integer "
-                     "for reproducibility)"=RANDOM_SEED):
+                     "for reproducibility)"=RANDOM_SEED,
+        show_plot: "Whether or not to show the plot"=True):
     """
     Perform differential analysis on gene expression data of two phenotypes.
     :param phenotype_file: Series; input binary phenotype/class distinction
@@ -283,7 +284,8 @@ def differential_gene_expression(
     :param number_of_permutations: int; number of random permutations to estimate statistical significance (p-values and FDRs)
     :param title: str;
     :param random_seed: int | array; random number generator seed (can be set to a user supplied integer for reproducibility)
-    :return: DataFrame; table of genes ranked by Information Coeff vs. phenotype
+    :param show_plot; bool; Wether or not to show the plot
+    :return: DataFrame; table of genes ranked by Information Coefficient vs. phenotype
     """
 
     # Loading GCT file
@@ -334,9 +336,11 @@ def differential_gene_expression(
         random_seed=random_seed,
         target_type='binary',
         title=title,
-        file_path_prefix=output_filename)
+        file_path_prefix=output_filename,
+        show_plot=show_plot)
 
-    show()
+    if show_plot:
+        show()
 
     return gene_scores
 
@@ -450,7 +454,8 @@ def make_match_panel(target,
                      plot_column_names=False,
                      max_ytick_size=26,
                      file_path_prefix=None,
-                     dpi=100):
+                     dpi=100,
+                     show_plot=True):
     """
     Make match panel.
     Arguments:
@@ -596,14 +601,15 @@ def make_match_panel(target,
                      features_type, title, target_annotation_kwargs,
                      plot_column_names, max_ytick_size, file_path_plot, dpi)
 
-    # 2018-01-17 printing hyperlink to PDF and TXT:
-    print("-----------------------------------------------")
-    print("The PDF of this heatmap can be downloaded here:\n")
-    display(HTML('<a href="'+file_path_plot+'" target="_blank">PDF of the heatmap</a>'))
-    print("-----------------------------------------------")
-    print("The TXT with the data displayed on the heatmap can be downloaded here:\n")
-    display(HTML('<a href="' + file_path_txt + '" target="_blank">TXT containing the output data</a>'))
-    print("-----------------------------------------------")
+    if show_plot:
+        # 2018-01-17 printing hyperlink to PDF and TXT:
+        print("-----------------------------------------------")
+        print("The PDF of this heatmap can be downloaded here:\n")
+        display(HTML('<a href="'+file_path_plot+'" target="_blank">PDF of the heatmap</a>'))
+        print("-----------------------------------------------")
+        print("The TXT with the data displayed on the heatmap can be downloaded here:\n")
+        display(HTML('<a href="' + file_path_txt + '" target="_blank">TXT containing the output data</a>'))
+        print("-----------------------------------------------")
 
     # get a list of columns
     cols = list(scores.drop(['Score(0.95 MoE)'], axis=1))
