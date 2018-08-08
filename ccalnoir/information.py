@@ -285,8 +285,7 @@ def differential_gene_expression(
     :param random_seed: int | array; random number generator seed (can be set to a user supplied integer for reproducibility)
     :return: DataFrame; table of genes ranked by Information Coeff vs. phenotype
     """
-    print(gene_expression)
-    print(phenotype_file)
+
     # Loading GCT file
     try:
         data_df = pd.read_table(gene_expression, header=2, index_col=0)
