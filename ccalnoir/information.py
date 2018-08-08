@@ -301,12 +301,15 @@ def differential_gene_expression(
         pass
 
     # Loading CLS file
-    if validators.url(phenotype_file):
-        urlfile, __ = urllib.request.urlretrieve(phenotype_file)
-    else:
-        urlfile = phenotype_file
+    try:
+        temp = open(phenotype_file)
+    except FileNotFoundError:
+        if validators.url(phenotype_file):
+            urlfile, __ = urllib.request.urlretrieve(phenotype_file)
+        else:
+            urlfile = phenotype_file
 
-    temp = open(urlfile)
+        temp = open(urlfile)
     if 'html' in temp.readline():
         classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
         classes = pd.Series(classes, index=data_df.columns)
