@@ -309,14 +309,21 @@ def differential_gene_expression(
         else:
             urlfile = phenotype_file
 
-        temp = open(urlfile)
-    if 'html' in temp.readline():
-        classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
-        classes = pd.Series(classes, index=data_df.columns)
-    else:
-        temp.readline()
-        classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
-        classes = pd.Series(classes, index=data_df.columns)
+        try:
+            temp = open(urlfile)
+            if 'html' in temp.readline():
+                classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
+                classes = pd.Series(classes, index=data_df.columns)
+            else:
+                temp.readline()
+                classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
+                classes = pd.Series(classes, index=data_df.columns)
+
+        except FileNotFoundError:
+            classes = pd.read_table(urlfile, header=2)
+            print(classes)
+            classes.index = data_df.columns
+            print(classes)
 
     gene_scores = make_match_panel(
         features=data_df,
