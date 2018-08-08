@@ -615,6 +615,7 @@ def make_match_panel(target,
     cols = list(scores.drop(['Score(0.95 MoE)'], axis=1))
     # move the column to head of list using index, pop and insert
     cols.insert(0, cols.pop(cols.index('Score')))
+    print('done!')
     # use ix to reorder
     return scores.ix[:, cols]
 
