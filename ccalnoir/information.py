@@ -291,6 +291,9 @@ def differential_gene_expression(
     # Loading GCT file
     try:
         data_df = pd.read_table(gene_expression, header=2, index_col=0)
+    except ValueError:
+        # gene_expression is a DataFrame
+        data_df = gene_expression
     except FileNotFoundError:
         data_df = pd.read_table(os.path.basename(gene_expression), header=2, index_col=0)
     except pd.errors.ParserError:
