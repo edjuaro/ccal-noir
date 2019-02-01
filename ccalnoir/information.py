@@ -307,7 +307,7 @@ def differential_gene_expression(
         pass
 
     # Loading CLS file
-    if if isinstance(phenotype_file, pd.Series):
+    if isinstance(phenotype_file, pd.Series):
         classes = phenotype_file
     else:
         try:
