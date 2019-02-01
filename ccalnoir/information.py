@@ -307,25 +307,28 @@ def differential_gene_expression(
         pass
 
     # Loading CLS file
-    try:
-        temp = open(phenotype_file)
-    except FileNotFoundError:
-        print("Trying local file")
-        try:
-            temp = open(os.path.basename(phenotype_file))
-        except FileNotFoundError:
-            if validators.url(phenotype_file):
-                urlfile, __ = urllib.request.urlretrieve(phenotype_file)
-            else:
-                urlfile = phenotype_file
-            temp = open(urlfile)
-    if 'html' in temp.readline():
-        classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
-        classes = pd.Series(classes, index=data_df.columns)
+    if if isinstance(phenotype_file, pd.Series):
+        classes = phenotype_file
     else:
-        temp.readline()
-        classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
-        classes = pd.Series(classes, index=data_df.columns)
+        try:
+            temp = open(phenotype_file)
+        except FileNotFoundError:
+            print("Trying local file")
+            try:
+                temp = open(os.path.basename(phenotype_file))
+            except FileNotFoundError:
+                if validators.url(phenotype_file):
+                    urlfile, __ = urllib.request.urlretrieve(phenotype_file)
+                else:
+                    urlfile = phenotype_file
+                temp = open(urlfile)
+        if 'html' in temp.readline():
+            classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
+            classes = pd.Series(classes, index=data_df.columns)
+        else:
+            temp.readline()
+            classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
+            classes = pd.Series(classes, index=data_df.columns)
 
     gene_scores = make_match_panel(
         features=data_df,
