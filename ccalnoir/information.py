@@ -316,6 +316,7 @@ def differential_gene_expression(
         try:
             temp = open(phenotype_file)
             temp.readline()
+            temp.readline()
             classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
             classes = pd.Series(classes, index=data_df.columns)
         except FileNotFoundError:
@@ -329,6 +330,7 @@ def differential_gene_expression(
                     else:
                         urlfile = phenotype_file
                     temp = open(urlfile)
+                    temp.readline()
                     temp.readline()
                     classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
                     classes = pd.Series(classes, index=data_df.columns)
