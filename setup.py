@@ -1,7 +1,11 @@
 from setuptools import setup
 
+execfile('...sample/version.py')
+# now we have a `__version__` variable
+# later on we use: __version__
+
 setup(name='ccalnoir',
-      version='2.6',
+      version=__version__,
       description='CCAL but with "No R".',
       url='https://github.com/edjuaro/ccal-noir',
       author='Edwin F. Juarez',
