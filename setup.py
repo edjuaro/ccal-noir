@@ -1,6 +1,6 @@
 from setuptools import setup
 
-execfile('...sample/version.py')
+exec(compile(open('ccalnoir/version.py', "rb").read(), filename, 'exec'), globals, locals)
 # now we have a `__version__` variable
 # later on we use: __version__
 
