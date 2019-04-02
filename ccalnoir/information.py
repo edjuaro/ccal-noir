@@ -318,22 +318,23 @@ def differential_gene_expression(
             temp.readline()
             classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
             classes = pd.Series(classes, index=data_df.columns)
-        except HTTPError:
-            classes = get_file_from_server(gene_pattern_url=gene_expression, file_type='CLS')
-            classes = pd.Series(classes, index=data_df.columns)
         except FileNotFoundError:
             print("Trying local file")
             try:
                 temp = open(os.path.basename(phenotype_file))
             except FileNotFoundError:
-                if validators.url(phenotype_file):
-                    urlfile, __ = urllib.request.urlretrieve(phenotype_file)
-                else:
-                    urlfile = phenotype_file
-                temp = open(urlfile)
-                temp.readline()
-                classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
-                classes = pd.Series(classes, index=data_df.columns)
+                try:
+                    if validators.url(phenotype_file):
+                        urlfile, __ = urllib.request.urlretrieve(phenotype_file)
+                    else:
+                        urlfile = phenotype_file
+                    temp = open(urlfile)
+                    temp.readline()
+                    classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
+                    classes = pd.Series(classes, index=data_df.columns)
+                except HTTPError:
+                    classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
+                    classes = pd.Series(classes, index=data_df.columns)
 
     gene_scores = make_match_panel(
         features=data_df,
