@@ -197,7 +197,7 @@ def makeODF(output_data, vals, file_name='noname.odf'):
 
 
 def get_file_from_server(gene_pattern_url, file_type='GCT'):
-    data = gp.GPFile(genepattern.session.get(0),gene_pattern_url).read()
+    file_io = gp.GPFile(genepattern.session.get(0),gene_pattern_url).read()
     # # get the input filename and job number
     # jobNum = gene_pattern_url.split("/")[-2]
     # input_file_Name = gene_pattern_url.split("/")[-1]
@@ -209,16 +209,15 @@ def get_file_from_server(gene_pattern_url, file_type='GCT'):
     # # Handle all the various initialization types and get an IO object
     # file_io = _obtain_io(lastJob.get_file(input_file_Name))
     #
-    # if file_type == 'GCT':
-    #     # Load the GCT file into a DataFrame
-    #     data = pd.read_table(file_io, header=2, index_col=0)
-    #     # Apply backwards compatible methods
-    #     _apply_backwards_compatibility(data)
-    # elif file_type == 'CLS':
-    #     # Load the CLS into a **list**!
-    #     temp = file_io.read().decode('utf-8').split('\n')
-    #     data = [int(i) for i in temp[2].strip('\n').split(' ')]
-    # else:
-    #     print("Unfortunatley, reading the file type {} is not supported at the moment :/".format(file_type))
+    if file_type == 'GCT':
+        # Load the GCT file into a DataFrame
+        data = genepattern.GCT(file_io)
+    elif file_type == 'CLS':
+        # Load the CLS into a **list**!
+        temp = file_io.read().decode('utf-8').split('\n')
+        data = [int(i) for i in temp[2].strip('\n').split(' ')]
+    else:
+        print("Unfortunatley, reading the file type {} is not supported at the moment :/ returning the file as a string".format(file_type))
+        data = file_io
 
     return data
