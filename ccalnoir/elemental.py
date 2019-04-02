@@ -216,7 +216,7 @@ def get_file_from_server(gene_pattern_url, file_type='GCT'):
         _apply_backwards_compatibility(data)
     elif file_type == 'CLS':
         # Load the CLS into a **list**!
-        temp = file_io.read().decode('utf-8').split('\n')
+        temp = file_io.read().split('\n')
         data = [int(i) for i in temp[2].strip('\n').split(' ')]
     else:
         print("Unfortunatley, reading the file type {} is not supported at the moment :/ returning the file as a string".format(file_type))
