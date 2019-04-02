@@ -197,7 +197,7 @@ def makeODF(output_data, vals, file_name='noname.odf'):
 
 
 def get_file_from_server(gene_pattern_url, file_type='GCT'):
-    file_io = gp.GPFile(genepattern.session.get(0),gene_pattern_url).read()
+    data = gp.GPFile(genepattern.session.get(0),gene_pattern_url).read()
     # # get the input filename and job number
     # jobNum = gene_pattern_url.split("/")[-2]
     # input_file_Name = gene_pattern_url.split("/")[-1]
@@ -211,13 +211,14 @@ def get_file_from_server(gene_pattern_url, file_type='GCT'):
     #
     if file_type == 'GCT':
         # Load the GCT file into a DataFrame
-        data = genepattern.GCT(file_io)
+        data = pd.read_table(file_io, header=2, index_col=0)
+        # Apply backwards compatible methods
+        _apply_backwards_compatibility(data)
     elif file_type == 'CLS':
         # Load the CLS into a **list**!
         temp = file_io.read().decode('utf-8').split('\n')
         data = [int(i) for i in temp[2].strip('\n').split(' ')]
     else:
         print("Unfortunatley, reading the file type {} is not supported at the moment :/ returning the file as a string".format(file_type))
-        data = file_io
 
     return data
