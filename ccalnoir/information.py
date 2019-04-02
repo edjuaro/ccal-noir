@@ -40,6 +40,7 @@ warnings.simplefilter("ignore")  # Ignore all warnings
 EPS = finfo(float).eps
 # TODO: Turn this into an advanced parameter for any GP Module -- 2018-02-08
 RANDOM_SEED = 20121020
+from urllib.error import HTTPError
 
 
 def information_coefficient_dist(x, y, n_grids=25, jitter=1E-10, random_seed=20121020, fft=True):
