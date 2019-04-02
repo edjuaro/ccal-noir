@@ -315,13 +315,12 @@ def differential_gene_expression(
     else:
         try:
             temp = open(phenotype_file)
-            if 'html' in temp.readline():
-                classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
-                classes = pd.Series(classes, index=data_df.columns)
-            else:
-                temp.readline()
-                classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
-                classes = pd.Series(classes, index=data_df.columns)
+            temp.readline()
+            classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
+            classes = pd.Series(classes, index=data_df.columns)
+        except HTTPError:
+            classes = get_file_from_server(gene_pattern_url=gene_expression, file_type='CLS')
+            classes = pd.Series(classes, index=data_df.columns)
         except FileNotFoundError:
             print("Trying local file")
             try:
@@ -332,19 +331,9 @@ def differential_gene_expression(
                 else:
                     urlfile = phenotype_file
                 temp = open(urlfile)
-                if 'html' in temp.readline():
-                    classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
-                    classes = pd.Series(classes, index=data_df.columns)
-                else:
-                    temp.readline()
-                    classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
-                    classes = pd.Series(classes, index=data_df.columns)
-            except HTTPError:
-                classes = get_file_from_server(gene_pattern_url=gene_expression, file_type='CLS')
+                temp.readline()
+                classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
                 classes = pd.Series(classes, index=data_df.columns)
-        except HTTPError:
-            classes = get_file_from_server(gene_pattern_url=gene_expression, file_type='CLS')
-            classes = pd.Series(classes, index=data_df.columns)
 
     gene_scores = make_match_panel(
         features=data_df,
