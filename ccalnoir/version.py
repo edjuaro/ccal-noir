@@ -1,1 +1,2 @@
-global __version__ = '2.7'
+global __version__
+__version__ = '2.7'
