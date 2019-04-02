@@ -299,8 +299,6 @@ def differential_gene_expression(
         data_df = pd.read_table(os.path.basename(gene_expression), header=2, index_col=0)
     except pd.errors.ParserError:
         data_df = get_file_from_server(gene_pattern_url=gene_expression, file_type='GCT')
-    except HTTPError:
-        data_df = get_file_from_server(gene_pattern_url=gene_expression, file_type='GCT')
 
     try:
         data_df.drop('Description', axis=1, inplace=True)
