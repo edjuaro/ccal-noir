@@ -1,7 +1,7 @@
 from setuptools import setup
 
 version = {}
-with open("...sample/version.py") as fp:
+with open("ccalnoir/version.py") as fp:
     exec(fp.read(), version)
 # later on we use: version['__version__']
 __version__ = version['__version__']
