@@ -1,8 +1,10 @@
 from setuptools import setup
-filename='ccalnoir/version.py'
-exec(compile(open(filename, "rb").read(), filename, 'exec'), globals, locals)
-# now we have a `__version__` variable
-# later on we use: __version__
+
+version = {}
+with open("...sample/version.py") as fp:
+    exec(fp.read(), version)
+# later on we use: version['__version__']
+__version__ = version['__version__']
 
 setup(name='ccalnoir',
       version=__version__,
