@@ -325,6 +325,8 @@ def differential_gene_expression(
                 else:
                     urlfile = phenotype_file
                 temp = open(urlfile)
+            except HTTPError:
+                data_df = get_file_from_server(gene_pattern_url=gene_expression, file_type='GCT')
         if 'html' in temp.readline():
             classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
             classes = pd.Series(classes, index=data_df.columns)
@@ -405,18 +407,22 @@ def match_to_profile(
         pass
 
     # Loading CLS file
-    if validators.url(phenotype_file):
-        urlfile, __ = urllib.request.urlretrieve(phenotype_file)
-    else:
-        urlfile = phenotype_file
+    try:
+        if validators.url(phenotype_file):
+            urlfile, __ = urllib.request.urlretrieve(phenotype_file)
+        else:
+            urlfile = phenotype_file
 
-    temp = open(urlfile)
-    if 'html' in temp.readline():
-        classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
-        classes = pd.Series(classes, index=data_df.columns)
-    else:
-        temp.readline()
-        classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
+        temp = open(urlfile)
+        if 'html' in temp.readline():
+            classes = get_file_from_server(gene_pattern_url=phenotype_file, file_type='CLS')
+            classes = pd.Series(classes, index=data_df.columns)
+        else:
+            temp.readline()
+            classes = [int(i) for i in temp.readline().strip('\n').split(' ')]
+            classes = pd.Series(classes, index=data_df.columns)
+    except HTTPError:
+        classes = get_file_from_server(gene_pattern_url=gene_expression, file_type='CLS')
         classes = pd.Series(classes, index=data_df.columns)
 
     # Turn a string into a callable function, if necessary
