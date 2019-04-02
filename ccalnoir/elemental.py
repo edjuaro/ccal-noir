@@ -197,7 +197,7 @@ def makeODF(output_data, vals, file_name='noname.odf'):
 
 
 def get_file_from_server(gene_pattern_url, file_type='GCT'):
-    data = gp.GPFile(genepattern.session.get(0),gene_pattern_url).read()
+    file_io = gp.GPFile(genepattern.session.get(0),gene_pattern_url).read()
     # # get the input filename and job number
     # jobNum = gene_pattern_url.split("/")[-2]
     # input_file_Name = gene_pattern_url.split("/")[-1]
