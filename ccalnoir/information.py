@@ -1856,7 +1856,7 @@ def fastkde(x, y, gridsize=(200, 200), extents=None, nocorrelation=False, weight
     # Next, make a 2D histogram of x & y.
     # Exploit a sparse coo_matrix avoiding np.histogram2d due to excessive
     # memory usage with many points
-    grid = coo_matrix((weights, xyi), shape=(nx, ny)).toarray()
+    grid = coo_matrix((weights, xyi), shape=(int(nx), int(ny))).toarray()
 
     # Kernel Preliminary Calculations ---------------------------------------
     # Calculate the covariance matrix (in pixel coords)
