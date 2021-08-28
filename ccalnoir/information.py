@@ -1836,6 +1836,10 @@ def fastkde(x, y, gridsize=(200, 200), extents=None, nocorrelation=False, weight
 
     nx, ny = gridsize
 
+    ## Check grid dimensions are integers to address numpy data type errors
+    nx = int(nx)
+    ny = int(ny)
+
     # Make the sparse 2d-histogram -------------------------------------------
     # Default extents are the extent of the data
     if extents is None:
