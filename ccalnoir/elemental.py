@@ -237,7 +237,7 @@ def read_gmt(gmt_file_path, drop_description=True):
 
             lines.append(split[:2] + [gene for gene in set(split[2:]) if gene])
 
-    df = DataFrame(lines)
+    df = pd.DataFrame(lines)
 
     df.set_index(0, inplace=True)
 
