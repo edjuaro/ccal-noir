@@ -598,7 +598,7 @@ def make_match_panel(target,
             key=lambda i: scores.loc[i, 'Score'],
             reverse=not scores_ascending)
 
-    scores_to_plot = scores.iloc[indices]
+    scores_to_plot = scores.loc[indices]
     features_to_plot = features.loc[scores_to_plot.index]
 
     # Make annotations
