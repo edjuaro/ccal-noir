@@ -598,7 +598,7 @@ def make_match_panel(target,
             key=lambda i: scores.loc[i, 'Score'],
             reverse=not scores_ascending)
 
-    scores_to_plot = scores.ix[indices]
+    scores_to_plot = scores.loc[indices]
     features_to_plot = features.loc[scores_to_plot.index]
 
     # Make annotations
@@ -623,6 +623,7 @@ def make_match_panel(target,
                          features_type, title, target_annotation_kwargs,
                          plot_column_names, max_ytick_size, file_path_plot, dpi)
 
+    if file_path_prefix:
         # 2018-01-17 printing hyperlink to PDF and TXT:
         print("-----------------------------------------------")
         print("The PDF of this heatmap can be downloaded here:\n")
@@ -637,8 +638,7 @@ def make_match_panel(target,
     # move the column to head of list using index, pop and insert
     cols.insert(0, cols.pop(cols.index('Score')))
     print('done!')
-    # use ix to reorder
-    return scores.ix[:, cols]
+    return scores.loc[:, cols]
 
 def drop_df_slices(df,
                    axis,
@@ -1835,6 +1835,10 @@ def fastkde(x, y, gridsize=(200, 200), extents=None, nocorrelation=False, weight
     gridsize = 2 ** np.ceil(np.log2(gridsize))  # round to next power of 2
 
     nx, ny = gridsize
+
+    ## Check grid dimensions are integers to address numpy data type errors
+    nx = int(nx)
+    ny = int(ny)
 
     # Make the sparse 2d-histogram -------------------------------------------
     # Default extents are the extent of the data
